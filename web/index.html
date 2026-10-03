@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Northstar Revenue Desk — Live Demo</title>
+  <style>
+    :root {
+      --ink: #17211b; --muted: #68736c; --paper: #f4f1e8; --panel: #fffdf7;
+      --line: #d9d5c9; --green: #174f3a; --green-2: #dfece5; --amber: #a44d1d;
+      --amber-2: #f8e6d8; --shadow: 0 18px 55px rgba(28,42,34,.10);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Trebuchet MS", Arial, sans-serif; }
+    button, input, select, textarea { font: inherit; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #8db8a5; outline-offset: 2px; }
+    .shell { min-height: 100vh; display: grid; grid-template-rows: auto 1fr; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:24px; padding:22px 32px; border-bottom:1px solid var(--line); background:rgba(244,241,232,.94); }
+    .brand { display:flex; align-items:center; gap:12px; }
+    .mark { width:38px; height:38px; display:grid; place-items:center; border:2px solid var(--green); border-radius:50%; color:var(--green); font:700 20px Georgia,serif; }
+    .brand strong { display:block; font-family:Georgia,serif; font-size:19px; }
+    .brand span { color:var(--muted); font-size:12px; letter-spacing:.08em; text-transform:uppercase; }
+    .live { display:flex; align-items:center; gap:8px; color:var(--green); font-weight:700; font-size:13px; }
+    .dot { width:9px; height:9px; border-radius:50%; background:#2d8b62; box-shadow:0 0 0 5px rgba(45,139,98,.12); }
+    main { display:grid; grid-template-columns:minmax(330px, .88fr) minmax(520px, 1.45fr); gap:22px; padding:22px; max-width:1500px; width:100%; margin:0 auto; }
+    .panel { background:var(--panel); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); overflow:hidden; }
+    .panel-head { padding:22px 24px 18px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; gap:16px; align-items:flex-start; }
+    h1,h2,h3,p { margin-top:0; }
+    h1 { font:700 28px/1.1 Georgia,serif; margin-bottom:8px; }
+    h2 { font:700 20px/1.2 Georgia,serif; margin-bottom:5px; }
+    .sub { color:var(--muted); margin:0; font-size:14px; line-height:1.45; }
+    .customer { padding:22px 24px 26px; }
+    .mode { display:flex; gap:8px; margin-bottom:18px; }
+    .mode button { border:1px solid var(--line); background:#fff; color:var(--ink); border-radius:999px; padding:8px 12px; cursor:pointer; font-size:12px; font-weight:700; }
+    .mode button:hover { border-color:var(--green); color:var(--green); }
+    form { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    label { display:grid; gap:7px; color:#354139; font-size:12px; font-weight:700; letter-spacing:.02em; }
+    label.wide { grid-column:1/-1; }
+    input,select,textarea { width:100%; border:1px solid #cfcabf; background:#fff; border-radius:10px; color:var(--ink); padding:11px 12px; min-height:44px; }
+    textarea { min-height:78px; resize:vertical; }
+    .submit { grid-column:1/-1; border:0; border-radius:11px; min-height:48px; padding:12px 16px; background:var(--green); color:white; cursor:pointer; font-weight:800; }
+    .submit:hover { background:#0e3f2c; }
+    .submit[disabled] { opacity:.55; cursor:wait; }
+    .reply { display:none; margin-top:18px; padding:16px; border-radius:12px; background:var(--green-2); color:#123c2c; line-height:1.5; font-size:14px; }
+    .reply.show { display:block; }
+    .reply.urgent { background:var(--amber-2); color:#713515; }
+    .reply strong { display:block; margin-bottom:5px; }
+    .operator { display:grid; grid-template-rows:auto auto 1fr; min-height:680px; }
+    .operator-title { display:flex; gap:14px; align-items:center; }
+    .shield { flex:none; border:1px solid #a8c7b8; background:var(--green-2); color:var(--green); border-radius:9px; padding:7px 9px; font-size:11px; font-weight:800; }
+    .metrics { display:grid; grid-template-columns:repeat(4,1fr); border-bottom:1px solid var(--line); }
+    .metric { padding:18px 20px; border-right:1px solid var(--line); }
+    .metric:last-child { border-right:0; }
+    .metric span { display:block; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
+    .metric strong { font:700 26px Georgia,serif; }
+    .workspace { display:grid; grid-template-columns:1.35fr .8fr; min-height:0; }
+    .queue { padding:20px; border-right:1px solid var(--line); }
+    .queue-head { display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:14px; }
+    .queue-head h3, .guardrails h3 { font-size:13px; text-transform:uppercase; letter-spacing:.08em; margin:0; }
+    .queue-list { display:grid; gap:10px; }
+    .empty { padding:45px 20px; text-align:center; border:1px dashed #c9c4b9; border-radius:12px; color:var(--muted); line-height:1.5; }
+    .lead { padding:14px; border:1px solid var(--line); border-radius:12px; display:grid; grid-template-columns:1fr auto; gap:8px 14px; background:#fff; }
+    .lead strong { font-size:14px; }
+    .lead .detail { grid-column:1/-1; color:var(--muted); font-size:12px; line-height:1.4; }
+    .badge { align-self:start; border-radius:999px; padding:5px 8px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; background:var(--green-2); color:var(--green); }
+    .badge.urgent { background:var(--amber-2); color:var(--amber); }
+    .guardrails { padding:20px; background:#faf8f1; }
+    .guardrails ul { list-style:none; margin:16px 0 0; padding:0; display:grid; gap:12px; }
+    .guardrails li { display:grid; grid-template-columns:18px 1fr; gap:9px; color:#49554e; font-size:12px; line-height:1.4; }
+    .check { width:17px; height:17px; border-radius:50%; display:grid; place-items:center; background:var(--green-2); color:var(--green); font-size:10px; font-weight:bold; }
+    .tech { margin-top:22px; padding-top:17px; border-top:1px solid var(--line); color:var(--muted); font-size:11px; line-height:1.55; }
+    .tech a { color:var(--green); }
+    .error { color:#9a321f; margin-top:10px; font-size:13px; }
+    @media (max-width: 980px) { main { grid-template-columns:1fr; } .operator { min-height:auto; } }
+    @media (max-width: 650px) { header { padding:17px; } main { padding:12px; } form { grid-template-columns:1fr; } label.wide,.submit { grid-column:auto; } .metrics { grid-template-columns:1fr 1fr; } .metric:nth-child(2) { border-right:0; } .metric:nth-child(-n+2) { border-bottom:1px solid var(--line); } .workspace { grid-template-columns:1fr; } .queue { border-right:0; border-bottom:1px solid var(--line); } }
+    @media (prefers-reduced-motion:no-preference) { .lead { animation:arrive .28s ease-out; } @keyframes arrive { from { opacity:0; transform:translateY(6px); } } }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div class="brand"><div class="mark">N</div><div><strong>Northstar Revenue Desk</strong><span>Home-service lead recovery</span></div></div>
+    <div class="live"><span class="dot"></span> Local demo online</div>
+  </header>
+  <main>
+    <section class="panel" aria-labelledby="customer-title">
+      <div class="panel-head"><div><h1 id="customer-title">Try the receptionist</h1><p class="sub">Submit an ordinary request or test the human-escalation path.</p></div></div>
+      <div class="customer">
+        <div class="mode"><button type="button" id="normal-demo">Load normal request</button><button type="button" id="urgent-demo">Load urgent request</button></div>
+        <form id="intake-form">
+          <label>Name<input name="name" autocomplete="name" required value="Jamie Rivera"></label>
+          <label>Phone<input name="phone" autocomplete="tel" required value="555-0102"></label>
+          <label>Service<select name="service"><option>HVAC</option><option>Plumbing</option><option>Electrical</option></select></label>
+          <label>ZIP code<input name="zip_code" inputmode="numeric" required value="85001"></label>
+          <label class="wide">What happened?<textarea name="problem" required>The air conditioner is blowing warm air.</textarea></label>
+          <label class="wide">Preferred time<input name="preferred_time" required value="Tomorrow morning"></label>
+          <button class="submit" type="submit">Recover this lead</button>
+        </form>
+        <div id="customer-reply" class="reply" aria-live="polite"></div>
+        <div id="form-error" class="error" aria-live="assertive"></div>
+      </div>
+    </section>
+
+    <section class="panel operator" aria-labelledby="operator-title">
+      <div class="panel-head">
+        <div class="operator-title"><div><h2 id="operator-title">Owner command center</h2><p class="sub">Every number below comes from this live local demo session.</p></div></div>
+        <div class="shield">SAFE DEMO</div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><span>Leads captured</span><strong id="metric-total">0</strong></div>
+        <div class="metric"><span>Ready to book</span><strong id="metric-ready">0</strong></div>
+        <div class="metric"><span>Urgent</span><strong id="metric-urgent">0</strong></div>
+        <div class="metric"><span>Human handoffs</span><strong id="metric-handoffs">0</strong></div>
+      </div>
+      <div class="workspace">
+        <div class="queue">
+          <div class="queue-head"><h3>Live lead queue</h3><span class="sub" id="queue-count">0 records</span></div>
+          <div id="lead-queue" class="queue-list"><div class="empty">No leads yet.<br>Submit the customer form to watch the workflow run.</div></div>
+        </div>
+        <aside class="guardrails">
+          <h3>Built-in guardrails</h3>
+          <ul>
+            <li><span class="check">✓</span><span>No diagnosis or unsafe technical advice</span></li>
+            <li><span class="check">✓</span><span>No binding price or arrival-time promises</span></li>
+            <li><span class="check">✓</span><span>Possible emergencies go to a human</span></li>
+            <li><span class="check">✓</span><span>Every interaction is visible to the owner</span></li>
+            <li><span class="check">✓</span><span>No calls, texts, or paid services enabled</span></li>
+          </ul>
+          <div class="tech"><strong>Next phase:</strong> voice intake over the phone, with the same routing rules and human escalation. Phone connectivity is disabled in this demo.</div>
+        </aside>
+      </div>
+    </section>
+  </main>
+</div>
+<script>
+  const form = document.getElementById('intake-form');
+  const reply = document.getElementById('customer-reply');
+  const errorBox = document.getElementById('form-error');
+  const queue = document.getElementById('lead-queue');
+  const $ = (id) => document.getElementById(id);
+
+  function setForm(data) {
+    Object.entries(data).forEach(([key,value]) => { const field=form.elements.namedItem(key); if(field) field.value=value; });
+    reply.className='reply'; reply.textContent=''; errorBox.textContent='';
+  }
+  $('normal-demo').onclick = () => setForm({name:'Jamie Rivera',phone:'555-0102',service:'HVAC',zip_code:'85001',problem:'The air conditioner is blowing warm air.',preferred_time:'Tomorrow morning'});
+  $('urgent-demo').onclick = () => setForm({name:'Alex Morgan',phone:'555-0188',service:'Plumbing',zip_code:'85003',problem:'A pipe burst and water is flooding the basement.',preferred_time:'Now'});
+
+  function escapeHtml(value) { const div=document.createElement('div'); div.textContent=String(value); return div.innerHTML; }
+  function render(state) {
+    const s=state.summary;
+    $('metric-total').textContent=s.total_leads; $('metric-ready').textContent=s.ready_to_book;
+    $('metric-urgent').textContent=s.urgent; $('metric-handoffs').textContent=s.human_escalations;
+    $('queue-count').textContent=`${state.leads.length} record${state.leads.length===1?'':'s'}`;
+    if(!state.leads.length){ queue.innerHTML='<div class="empty">No leads yet.<br>Submit the customer form to watch the workflow run.</div>'; return; }
+    queue.innerHTML=state.leads.map(lead=>`<article class="lead"><strong>${escapeHtml(lead.name)} · ${escapeHtml(lead.service)}</strong><span class="badge ${lead.priority==='urgent'?'urgent':''}">${escapeHtml(lead.status.replaceAll('_',' '))}</span><div class="detail">${escapeHtml(lead.problem)}<br>${escapeHtml(lead.phone)} · ${escapeHtml(lead.zip_code)} · ${escapeHtml(lead.preferred_time)}</div></article>`).join('');
+  }
+  async function refresh(){ const response=await fetch('/api/state'); if(!response.ok) throw new Error('Could not load queue'); render(await response.json()); }
+  form.addEventListener('submit', async (event)=>{
+    event.preventDefault(); errorBox.textContent=''; const button=form.querySelector('button[type="submit"]'); button.disabled=true; button.textContent='Processing…';
+    try {
+      const payload=Object.fromEntries(new FormData(form).entries());
+      const response=await fetch('/api/intake',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      const data=await response.json(); if(!response.ok) throw new Error(data.error||'Request failed');
+      reply.className=`reply show ${data.lead.priority==='urgent'?'urgent':''}`;
+      reply.innerHTML=`<strong>${data.lead.priority==='urgent'?'Human escalation triggered':'Lead captured safely'}</strong>${escapeHtml(data.lead.customer_message)}`;
+      await refresh();
+    } catch(error) { errorBox.textContent=error.message; }
+    finally { button.disabled=false; button.textContent='Recover this lead'; }
+  });
+  refresh().catch(error=>{ errorBox.textContent=error.message; });
+</script>
+</body>
+</html>
