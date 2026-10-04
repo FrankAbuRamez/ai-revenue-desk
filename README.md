@@ -2,7 +2,7 @@
 
 A missed-lead receptionist prototype for small HVAC, plumbing and electrical businesses. After hours, these businesses lose jobs because nobody answers. This demo captures the request, sorts it, and hands anything that sounds dangerous to a human immediately.
 
-Built by **Alaa Atassi** as an operations exercise in deciding what an automated front desk must **not** do.
+Built as an operations exercise in deciding what an automated front desk must **not** do.
 
 ![Owner command center with two leads: one ready to book, one escalated to a human](demo-with-leads.png)
 
